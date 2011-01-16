@@ -6,7 +6,20 @@ require_once '../../library/Iain/Optimize/Concat.php';
  */
 class Iain_Optimize_ConcatTest extends PHPUnit_Framework_TestCase
 {
-       
+
+	protected $dir;
+	
+	public function setUp(){
+		
+		$this->dir = dirname(__FILE__).'/builds/';
+		
+		
+	}
+	
+	public function tearDown(){
+		
+	}
+	
     /**
      * Constructs the test case.
      */
@@ -146,6 +159,76 @@ class Iain_Optimize_ConcatTest extends PHPUnit_Framework_TestCase
     		$this->assertEquals(array($buildName.'.js'),$builds[$buildName], 'Build '.$buildName.'.js is missing');
 		}
 		
+    }
+    
+    
+    public function testCreateBuildsWithTwoCombos(){
+    	
+    	if ( !file_exists($this->dir) ){
+			mkdir($this->dir);
+		}
+		
+		$fp = fopen($this->dir."one.js","w+");
+		fwrite($fp,"a");
+		fclose($fp);
+		
+		$fp = fopen($this->dir."two.js","w+");
+		fwrite($fp,"b");
+		fclose($fp);
+		
+		$fp = fopen($this->dir."three.js","w+");
+		fwrite($fp,"c");
+		fclose($fp);
+    	
+    	Iain_Optimize_Concat::$rawFiles = array( 'scripts' => array(), 'styles' => array() );
+    	
+    	Iain_Optimize_Concat::addFile('scripts','index', array($this->dir.'one.js',$this->dir.'two.js'));
+    	Iain_Optimize_Concat::addFile('scripts','about', array($this->dir.'two.js',$this->dir.'three.js'));
+
+    	$oneBuild = $this->dir.md5( implode('|',array($this->dir.'one.js'))).".js";
+    	$twoBuild = $this->dir.md5(implode('|',array($this->dir.'two.js'))).".js";
+    	$threeBuild = $this->dir.md5(implode('|',array($this->dir.'three.js'))).".js";
+    	
+    	Iain_Optimize_Concat::createBuilds('scripts', $this->dir);
+   
+    	$this->assertEquals( array('about' => $threeBuild,'aboutindex' => $twoBuild,'index' => $oneBuild), Iain_Optimize_Concat::$builds['scripts'] );
+    	
+    	$this->assertEquals(true,file_exists($oneBuild));
+    	$this->assertEquals(true,file_exists($twoBuild));
+    	$this->assertEquals(true,file_exists($threeBuild));
+    	$this->assertEquals(true,file_exists($oneBuild.".gz"));
+    	$this->assertEquals(true,file_exists($twoBuild.".gz"));
+    	$this->assertEquals(true,file_exists($threeBuild.".gz"));
+    	
+    	$this->assertEquals("a",file_get_contents($oneBuild));
+    	$this->assertEquals("b",file_get_contents($twoBuild));
+    	$this->assertEquals("c",file_get_contents($threeBuild));
+    	
+    	$fp =  gzopen($oneBuild.".gz","r9");
+    	$oneUncompressed = gzread($fp, 100);
+    	gzclose($fp);
+    	$fp =  gzopen($twoBuild.".gz","r9");
+    	$twoUncompressed = gzread($fp, 100);
+    	gzclose($fp);
+    	$fp =  gzopen($threeBuild.".gz","r9");
+    	$threeUncompressed = gzread($fp, 100);
+    	gzclose($fp);
+    	
+    	 
+    	$this->assertEquals("a",$oneUncompressed);
+    	$this->assertEquals("b",$twoUncompressed);
+    	$this->assertEquals("c",$threeUncompressed);
+
+		unlink($this->dir."one.js");
+		unlink($this->dir."two.js");
+		unlink($this->dir."three.js");
+		unlink($oneBuild);
+		unlink($twoBuild);
+		unlink($threeBuild);
+		unlink($oneBuild.".gz");
+		unlink($twoBuild.".gz");
+		unlink($threeBuild.".gz");
+		rmdir($this->dir);
     }
     
 }

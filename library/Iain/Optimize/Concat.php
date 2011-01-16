@@ -143,7 +143,7 @@ class Iain_Optimize_Concat {
 		$toBuild = ( $controller != false ) ? self::$pageBuilds[$fileType][$controller] : array_keys($buildPatterns); 
 	
 		foreach ( $toBuild as $build ){
-			
+			sort($buildPatterns[$build]);
 			$buildFilename = $buildLocation.hash('md5',implode('|',$buildPatterns[$build])).".".$extension;
 			$compressedBuildFilename = $buildFilename.".gz";
 			
@@ -165,13 +165,14 @@ class Iain_Optimize_Concat {
 			
 			// Compressed file for usage on Amazon S3/CloudFront
 			$fileResource = gzopen($compressedBuildFilename,'w9');				
-			gzwrite($fileResource,$fileContents);
+			gzwrite($fileResource,$buildContents);
 			gzclose($fileResource);
 			
 			self::$builds[$fileType][$build] = $buildFilename;
 			
 		}
-		
+		ksort(self::$builds[$fileType],SORT_STRING);
+		return true;
 	}
 	
 	
