@@ -61,7 +61,7 @@ class Iain_Optimize_ConcatTest extends PHPUnit_Framework_TestCase
     	Iain_Optimize_Concat::addFile('scripts','index', array('one.js','two.js'));
     	Iain_Optimize_Concat::addFile('scripts','about', array('two.js','three.js'));
     	
-    	$builds = Iain_Optimize_Concat::getScripts();
+    	$builds = Iain_Optimize_Concat::getBuildPatterns('scripts');
     	
     	$keys = array_keys($builds);
     	
@@ -86,7 +86,7 @@ class Iain_Optimize_ConcatTest extends PHPUnit_Framework_TestCase
     	Iain_Optimize_Concat::addFile('scripts','about', array('about.js','aboutindex.js','aboutindexperson.js','aboutperson.js'));
     	Iain_Optimize_Concat::addFile('scripts','person', array('person.js','aboutperson.js','indexperson.js','aboutindexperson.js'));
     	
-    	$builds = Iain_Optimize_Concat::getScripts();
+    	$builds = Iain_Optimize_Concat::getBuildPatterns('scripts');
     	
     	$keys = array_keys($builds);
     	
@@ -134,7 +134,7 @@ class Iain_Optimize_ConcatTest extends PHPUnit_Framework_TestCase
  								"aboutperson","aboutpersonpicture","aboutpicture","index","indexperson",
  								"indexpersonpicture","indexpicture","person","personpicture","picture");
  		
-    	$builds = Iain_Optimize_Concat::getScripts();
+    	$builds = Iain_Optimize_Concat::getBuildPatterns('scripts');
     	
     	
     	$keys = array_keys($builds);
