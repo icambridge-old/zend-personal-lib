@@ -31,6 +31,12 @@ class Iain_Optimize_Concat {
 	public static $buildPatterns = array( 'scripts' => array(), 'styles' => array() );
 	
 	/**
+	 * Contains the actual build files.
+	 * @var unknown_type
+	 */
+	public static $builds = array( 'scripts' => array(), 'styles' => array() );
+	
+	/**
 	 * Handles adding CSS or JavaScript files to the self::$rawFiles[$fileType]
 	 * array. 
 	 *  
@@ -107,14 +113,66 @@ class Iain_Optimize_Concat {
 	}
 	
 	/**
-	 * Fetches the build patterns.
+	 * Fetches the build patterns. For testing purposes.
 	 * 
-	 * @param unknown_type $fileType
+	 * @param String $fileType
 	 */
 	public static function getBuildPatterns($fileType){
 
 		return self::process($fileType);
 		
 	}
+	
+	
+	/**
+	 * Creates the builds for a specified controller or all the controllers.
+	 * 
+	 * @param String $fileType  Is ethier scripts or styles.
+	 * @param String $buildLocation the directory where the builds should happen.
+	 * @param String|Boolean $controller
+	 */
+	public static function createBuilds($fileType, $buildLocation, $controller = false){
+	
+		if ( $fileType != "scripts" && $fileType != "styles" ){
+			return false;
+		}
+		
+		$buildPatterns = self::process($fileType);
+		$extension = ( $fileType == 'scripts' ) ? 'js' : 'css';
+
+		$toBuild = ( $controller != false ) ? self::$pageBuilds[$fileType][$controller] : array_keys($buildPatterns); 
+	
+		foreach ( $toBuild as $build ){
+			
+			$buildFilename = $buildLocation.hash('md5',implode('|',$buildPatterns[$build])).".".$extension;
+			$compressedBuildFilename = $buildFilename.".gz";
+			
+			$buildContents = "";
+			foreach ( $buildPatterns[$build] as $filename ){
+				
+				if ( !file_exists($filename) ){
+					throw new Exception("File '".$filename."' doesn't exists");
+				}
+				
+				$buildContents .= file_get_contents($filename);
+				
+			}
+			
+			// Uncompressed file
+			$fp = fopen($buildFilename,"w+");
+			fwrite($fp,$buildContents);
+			fclose($fp);
+			
+			// Compressed file for usage on Amazon S3/CloudFront
+			$fileResource = gzopen($compressedBuildFilename,'w9');				
+			gzwrite($fileResource,$fileContents);
+			gzclose($fileResource);
+			
+			self::$builds[$fileType][$build] = $buildFilename;
+			
+		}
+		
+	}
+	
 	
 }
