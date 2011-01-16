@@ -143,37 +143,49 @@ class Iain_Optimize_Concat {
 		$toBuild = ( $controller != false ) ? self::$pageBuilds[$fileType][$controller] : array_keys($buildPatterns); 
 	
 		foreach ( $toBuild as $build ){
+			
 			sort($buildPatterns[$build]);
 			$buildFilename = $buildLocation.hash('md5',implode('|',$buildPatterns[$build])).".".$extension;
+			$highestMtime = 0;
+			
+			foreach ( $buildPatterns[$build] as $filename ){
+				if (filemtime($filename) > $highestMtime){
+					$highestMtime = filemtime($filename);
+				}	
+			}
+			
 			$compressedBuildFilename = $buildFilename.".gz";
 			
-			$buildContents = "";
-			foreach ( $buildPatterns[$build] as $filename ){
+			if ( !file_exists($buildFilename) || $highestMtime > filemtime($buildFilename) ){
 				
-				if ( !file_exists($filename) ){
-					throw new Exception("File '".$filename."' doesn't exists");
+				$buildContents = "";
+				
+				foreach ( $buildPatterns[$build] as $filename ){					
+					if ( !file_exists($filename) ){
+						throw new Exception("File '".$filename."' doesn't exists");
+					}					
+					$buildContents .= file_get_contents($filename);					
 				}
 				
-				$buildContents .= file_get_contents($filename);
+				// Uncompressed file
+				$fp = fopen($buildFilename,"w+");
+				fwrite($fp,$buildContents);
+				fclose($fp);
+				
+				// Compressed file for usage on Amazon S3/CloudFront
+				$fileResource = gzopen($compressedBuildFilename,'w9');				
+				gzwrite($fileResource,$buildContents);
+				gzclose($fileResource);
+				
+				self::$builds[$fileType][$build] = $buildFilename;
 				
 			}
 			
-			// Uncompressed file
-			$fp = fopen($buildFilename,"w+");
-			fwrite($fp,$buildContents);
-			fclose($fp);
-			
-			// Compressed file for usage on Amazon S3/CloudFront
-			$fileResource = gzopen($compressedBuildFilename,'w9');				
-			gzwrite($fileResource,$buildContents);
-			gzclose($fileResource);
-			
-			self::$builds[$fileType][$build] = $buildFilename;
-			
 		}
+		
 		ksort(self::$builds[$fileType],SORT_STRING);
+		
 		return true;
 	}
-	
-	
+		
 }
