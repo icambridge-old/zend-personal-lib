@@ -7,7 +7,7 @@
 	 * 
 	 * @author Iain Cambridge
 	 * @copyright Iain Cambridge all rights reserved 2011 (c)
-	 * @license http://backie.org/copyright/bsd-license BSD License
+	 * @license http://backie.org/copyright/freebsd-license/ FreeBSD License
 	 */
 
 class Iain_Optimize_Concat {
@@ -167,7 +167,7 @@ class Iain_Optimize_Concat {
 					$buildContents .= file_get_contents($filename);					
 				}
 				
-				// Uncompressed file
+				// Uncompressed file for those weirdos who don't have gzip.
 				$fp = fopen($buildFilename,"w+");
 				fwrite($fp,$buildContents);
 				fclose($fp);
@@ -187,5 +187,27 @@ class Iain_Optimize_Concat {
 		
 		return true;
 	}
+
+	/**
+	 * Returns the actual files for the controller in question.
+	 * 
+	 * @param string $fileType
+	 * @param string $controller
+	 * @throws Exception
+	 */
+	public function getFiles($fileType,$controller){
 		
+		if ( empty(self::$builds[$fileType]) ){
+			self::createBuilds($fileType,$controller);
+		}
+		
+		$returnValue = array();
+		
+		foreach( self::$pageBuilds[$fileType][$controller] as $build ){
+			$returnValue[] =  self::$builds[$fileType][$build];
+		}
+		
+		return $returnValue;
+	}
+	
 }
