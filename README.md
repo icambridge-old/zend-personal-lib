@@ -7,11 +7,11 @@ My personal Zend Framework class library. Very basic stuff currently but just le
 
 Currently just contains
 
-* Image
+* **Image**
 * * **Thumb** - Thumbnail creator
-* Optimize
+* **Optimize**
 * * **Concat** - Concatention system, helper needs finished.
-* Validate
+* **Validate**
 * * **Facebook** - Does a simple regex validation on facebook URLs.
 * * **Twitter** -  Does a simple regex validation on twitter URLs.
 
