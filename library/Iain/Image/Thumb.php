@@ -6,8 +6,8 @@
 	 * thumbnails pictures for a single picture.
 	 *  
 	 * @author Iain Cambridge
-	 * @license BSD License
-	 * @version 0.1
+	 * @license http://backie.org/copyright/bpl/ BPL
+	 * @version 0.2
 	 * @uses gd
 	 * @todo Improve!
 	 */
