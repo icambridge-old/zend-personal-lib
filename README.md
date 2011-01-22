@@ -17,7 +17,7 @@ Currently just contains
 
 ## TODO
 
-**Iain_Validate_Twitter** - Add validation that account exists.
-**Iain_Validate_Facebook** - Add validation that account exists.
-**Iain_Optimize_Concat** - Add veiw helper
-**ALL** - Improve!
+* **Iain_Validate_Twitter** - Add validation that account exists.
+* **Iain_Validate_Facebook** - Add validation that account exists.
+* **Iain_Optimize_Concat** - Add veiw helper
+* **ALL** - Improve!
