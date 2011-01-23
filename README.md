@@ -14,6 +14,9 @@ Currently just contains
 * **Validate**
 * * **Facebook** - Does a simple regex validation on facebook URLs.
 * * **Twitter** -  Does a simple regex validation on twitter URLs.
+* **Service**
+* * **Amazon**
+* * * **S3** - Simple wrapper to avoid redoing the upload code
 
 ## TODO
 
