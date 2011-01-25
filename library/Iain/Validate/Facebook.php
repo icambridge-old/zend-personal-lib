@@ -12,8 +12,7 @@
      * @todo Improve!!
      */
 
-class Iain_Validate_Facebook extends Zend_Validate_Regex {
-	
+class Iain_Validate_Facebook extends Iain_Validate_Page {
 	
 	public function __construct($pattern = false){
 		
@@ -21,14 +20,8 @@ class Iain_Validate_Facebook extends Zend_Validate_Regex {
 		parent::__construct("~http://(www\.)?facebook.com/([a-zA-Z0-9\_\-]+)~isU");
 		$this->_messageTemplates = array( parent::NOT_MATCH => "%value% is not a valid facebook URL.",
 										 parent::ERROROUS => "Shit went bad! Error report has been sent.",
-										 parent::INVALID => "Shit went bad! Error report been sent.");
-	}
-	
-	public function isValid($value){
-		
-		// TODO add check to validate twitter account exists.
-		return parent::isValid($value);
-		
+										 parent::INVALID => "Shit went bad! Error report been sent.",
+										 parent::INVALID_PAGE => "%value% is not a valid facebook account/page");
 	}
 	
 }

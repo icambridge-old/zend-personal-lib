@@ -12,8 +12,11 @@ Currently just contains
 * **Optimize**
 * * **Concat** - Concatention system, helper needs finished.
 * **Validate**
-* * **Facebook** - Does a simple regex validation on facebook URLs.
-* * **Twitter** -  Does a simple regex validation on twitter URLs.
+* * **Facebook** - Does a simple regex validation and 404 validation on facebook URLs.
+* * **Twitter** -  Does a simple regex validation and 404 validation on twitter URLs.
+* * **Tvrage** - Does a simple regex validation and 404 validation on tvrage URLs.
+* * **Imdb** - Does a simple regex validation and 404 validation on IMDb URLs.
+* * **Page** - The class that does the 404 validation, Facebook,Twitter,Tvrage,Imdb all inherit from this. 
 * **Service**
 * * **Amazon**
 * * * **S3** - Simple wrapper to avoid redoing the upload code
